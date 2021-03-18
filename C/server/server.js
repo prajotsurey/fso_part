@@ -83,13 +83,7 @@ const resolvers = {
       } return Books 
     },
     allAuthors: async () => {
-      const authors = await Author.find({})
-      const books = await Book.find({}).populate('author')
-      return authors.map(author => {
-        author.bookCount = books.filter(book => book.author.id === author.id ).length
-        console.log(author.bookCount)
-        return author
-      })
+      return await Author.find({})
     },
     me: async (root, args, context) => {
       return context.currentUser
@@ -158,6 +152,12 @@ const resolvers = {
       }
 
       return { value: jwt.sign(userForToken, JWT_SECRET)}
+    }
+  },
+  Author: {
+    bookCount: async ({ name }) => {
+      const books = await Book.find({ }).populate( 'author' )
+      return books.filter(book => book.author.name === name ).length
     }
   }
 }
